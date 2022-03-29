@@ -1,4 +1,4 @@
-# SteemRandomDraw
+# HiveRandomDraw
 
 ![st2](https://user-images.githubusercontent.com/35721447/39300073-6c0d0fa2-4942-11e8-8bec-20b994e9af72.png)
 **HiveRandomDraw** is an application based on the Steem block-chain that makes it easy to draw lots. No need to rewrite by hand all the names of the participants in another application or website. You just need at least one article to be hosted in the steem blockchain.
