@@ -64,7 +64,7 @@ function getAuthorPermlink(link_full)
 		}
 		else
 		{
-			reject("Please, Provide a valid link like https://busy.org/fr/@deadzy/my-contribution");
+			reject("Please, Provide a valid link like https://peakd.com/fr/@deadzy/my-contribution");
 		}
 	})
 }
