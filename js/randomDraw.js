@@ -7,6 +7,7 @@
 
 		var vote_participant = [];
 		var coms_participant = [];
+		var blog_participant = [];
 		var participants = [];
 		var win_list = [];
 		var bots_list = [];
@@ -96,10 +97,9 @@ function getInfoVote()
 {
 	return new Promise((resolve, reject) => 
 	{
-	    hive.api.getActiveVotes(sessionStorage.author, sessionStorage.permlink, function(err, result)
-	    {
+    hive.api.getActiveVotes(sessionStorage.author, sessionStorage.permlink, function(err, result)
+    {
 			//console.log("getVoteValid");
-
 			if(err == null) 
 			{
 				vote_min = $('#UpVoteValue')[0].innerText*100;
@@ -117,6 +117,40 @@ function getInfoVote()
 				    	}
 				    }
 				}
+				resolve();
+			}
+			else
+			{
+				reject(err);
+			}
+		});
+  })
+}
+
+function getInfoReblog() 
+{
+	return new Promise((resolve, reject) => 
+	{
+    hive.api.getRebloggedBy(sessionStorage.author, sessionStorage.permlink, function(err, result)
+    {
+			if(err == null) 
+			{
+				sessionStorage.setItem("blog_nb", result.length); // Number of reblog
+
+				result.forEach(function(item)
+				{
+					if(!$("#dble_box").is(":checked")  && $.inArray(item, win_list) >= 0) 
+					{} // Already win
+			    else
+			    {
+			    	if($("#bots_box").is(":checked") && $.inArray(item, bots_list) >= 0)
+			    	{} // Bot
+			    	else 
+			    	{
+			    		blog_participant.push(item); // Add list
+			    	}
+					}
+				});
 				resolve();
 			}
 			else
@@ -271,40 +305,45 @@ function getRandomDraw()
 			sessionStorage.setItem("winner", participants[randomNumber(participants.length)]);
 			resolve();
 		}
+		else if($("#coms_box").is(":checked")) // Only Coms
+		{
+			for (i = 0; i < coms_participant.length; i++)
+			{
+				$("#tab").append("<tr><td>"+(i+1)+"</td><td>"+coms_participant[i]+"</td></tr>");
+			}
+			sessionStorage.setItem("nb_valid", coms_participant.length);
+			sessionStorage.setItem("winner", coms_participant[randomNumber(coms_participant.length)]);
+			resolve();
+		}
+		else if($("#vote_box").is(":checked")) // Only vote
+		{
+			for (i = 0; i < vote_participant.length; i++)
+			{
+				$("#tab").append("<tr><td>"+(i+1)+"</td><td>"+vote_participant[i]+"</td></tr>");
+			}
+			sessionStorage.setItem("nb_valid", vote_participant.length);
+			sessionStorage.setItem("winner", vote_participant[randomNumber(vote_participant.length)]);
+			resolve();
+		}
+		else if($("#blog_box").is(":checked")) // Reblog only
+		{
+			for (i = 0; i < blog_participant.length; i++)
+			{
+				$("#tab").append("<tr><td>"+(i+1)+"</td><td>"+blog_participant[i]+"</td></tr>");
+			}
+			sessionStorage.setItem("nb_valid", blog_participant.length);
+			sessionStorage.setItem("winner", blog_participant[randomNumber(blog_participant.length)]);
+			resolve();
+		}
 		else
 		{
-			if($("#coms_box").is(":checked")) // Only Coms
-			{
-				for (i = 0; i < coms_participant.length; i++)
-				{
-					$("#tab").append("<tr><td>"+(i+1)+"</td><td>"+coms_participant[i]+"</td></tr>");
-				}
-				sessionStorage.setItem("nb_valid", coms_participant.length);
-				sessionStorage.setItem("winner", coms_participant[randomNumber(coms_participant.length)]);
-				resolve();
-			}
-			else if($("#vote_box").is(":checked")) // Only vote
-			{
-				for (i = 0; i < vote_participant.length; i++)
-				{
-					$("#tab").append("<tr><td>"+(i+1)+"</td><td>"+vote_participant[i]+"</td></tr>");
-				}
-				sessionStorage.setItem("nb_valid", vote_participant.length);
-				sessionStorage.setItem("winner", vote_participant[randomNumber(vote_participant.length)]);
-				resolve();
-			}
-			else
-			{
-				reject("Err random draw");
-			}
+			reject("Err random draw");
 		}
 	})
 }
 
 function getResult()
 {
-  	//console.log("getResult");
-
   console.log(sessionStorage.winner);
 	if(sessionStorage.winner != "undefined")
 	{
@@ -320,6 +359,7 @@ function getResult()
 
 	$('#coms_nb').html(sessionStorage.coms_nb);
 	$('#vote_nb').html(sessionStorage.vote_nb);
+	$('#blog_nb').html(sessionStorage.blog_nb);
 	$('#part_nb').html(sessionStorage.nb_valid);
 
 	if($("#coms_box").is(":checked")) // If opt coms
@@ -343,12 +383,16 @@ function getResult()
 				$('#cond_opt').html("<b class='w3-text-red'>"+$('#coms_tit').html()+"</b>");
 		}
 	}
-	else // If vote only
+	else if($("#vote_box").is(":checked")) // If vote only
 	{
 		if (localStorage.vote_min != "")
 			$('#cond_opt').html("<b class='w3-text-red'>"+$('#vote_tit').html()+"</b> <i>("+localStorage.vote_min+"%)</i>");
 		else
 			$('#cond_opt').html("<b class='w3-text-red'>"+$('#vote_tit').html()+"</b>");
+	}
+	else if($("#blog_box").is(":checked")) // If vote only
+	{
+		$('#cond_opt').html("<b class='w3-text-red'>Reblog only</b>");
 	}
 
 	if(sessionStorage.num_of_draws >= 2)
@@ -373,6 +417,7 @@ const start = async function(link)
 	  await getAuthorPermlink(link);
 	  await getInfoBase();
 		await getInfoVote();
+		await getInfoReblog();
 		if($("#repl_box").is(":checked") && $("#coms_box").is(":checked") && sessionStorage.coms_nb >= 1) // If coms reply is checked
 		{
 			await fetchReplies(sessionStorage.author, sessionStorage.permlink);
@@ -439,6 +484,25 @@ $("#vote_box").change(function()
 	}
 }).change();
 
+$("#blog_box").change(function()
+{
+	if($("#blog_box").is(":checked"))
+	{
+		$("#coms_box").prop('checked', false);
+		$("#vote_box").prop('checked', false);
+		$("#UpVoteSlider").prop('disabled', true);
+		$("#UpVoteSlider").fadeTo("slow", 0.33 );
+		$("#choi_view").addClass("w3-hide");
+		$("#coms_field").prop('disabled', true);
+		$("#coms_field").prop('value', "");
+	}
+	else
+	{
+		$("#coms_box").prop('checked', true);
+		$("#coms_field").prop('disabled', false);
+	}
+}).change();
+
 $("#btn_win_list").click(function()
 {
 	$("#win_tab").html(""); // RESET
@@ -462,6 +526,8 @@ $('#link_form').submit(function(event)
 		else localStorage.setItem("coms_box", false);
 		if($("#vote_box").is(":checked")) localStorage.setItem("vote_box", true);
 		else localStorage.setItem("vote_box", false);
+		if($("#blog_box").is(":checked")) localStorage.setItem("blog_box", true);
+		else localStorage.setItem("blog_box", false);
 		if($("#bots_box").is(":checked")) localStorage.setItem("bots_box", true);
 		else localStorage.setItem("bots_box", false);
 		if($("#dble_box").is(":checked")) localStorage.setItem("dble_box", true);
