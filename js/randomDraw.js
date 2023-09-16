@@ -546,6 +546,7 @@ $('#link_form').submit(function(event)
 		$('#result').addClass("w3-hide");
 		vote_participant = [];
 		coms_participant = [];
+		blog_participant = [];
 		participants = [];
 	// END RESET
 
