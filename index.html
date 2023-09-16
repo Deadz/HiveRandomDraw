@@ -8,7 +8,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/i18next-xhr-backend/1.5.1/i18nextXHRBackend.min.js" ></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-i18next/1.2.1/jquery-i18next.min.js" ></script>
 	<link rel="icon" href="favicon.ico" />
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
 	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<title data-i18n="pagename"></title>
@@ -28,10 +28,10 @@
 
 	<div class="w3-row-padding w3-content" style="max-width:1200px">
 		<div class="w3-half w3-margin-top">
-			<div class="w3-container w3-card w3-light-grey w3-padding-large w3-round-xxlarge">
+			<div class="w3-container w3-card w3-light-grey w3-padding-large w3-round-large">
 
 				<!-- Error start -->
-				<div id="err_div" class="w3-panel w3-red w3-display-container w3-border w3-round-xxlarge w3-hide">
+				<div id="err_div" class="w3-panel w3-red w3-display-container w3-border w3-round-large w3-hide">
 		  		<span onclick="this.parentElement.style.display='none'" class="w3-button w3-red w3-display-topright w3-margin w3-circle"><i class="fas fa-times-circle"></i></span>
 		  		<h3 id="err_title" data-i18n="errortitle"></h3>
 		  		<p id="err_body"></p>
@@ -40,11 +40,20 @@
 				<form class="w3-container w3-panel" id="link_form" method="post">
 
 					<label class="w3-text-dark-grey"><b data-i18n="link"></b></label>
-					<input class="w3-input w3-border w3-round-xxlarge w3-section" type="text" name="link_field" placeholder="https://peakd.com/@deadzy/..." id="link_field" autofocus>
+					<input class="w3-input w3-border w3-round-large w3-section" type="text" name="link_field" placeholder="https://peakd.com/@deadzy/..." id="link_field" autofocus>
 
 					<label class="w3-text-dark-grey"><b data-i18n="draw"></b></label>
 					<div class="w3-section">
-						<fieldset class="w3-border w3-round-xxlarge">
+						<fieldset class="w3-border w3-round-large">
+							<legend>
+								<input class="w3-check" type="checkbox" id="blog_box">
+								<label class="w3-text-dark-grey" for="blog_box">
+									<i class="fa-solid fa-retweet fa-lg" title="Reblog"></i> <b>Reblog only</b>
+								</label>
+							</legend>
+						</fieldset>
+
+						<fieldset class="w3-border w3-round-large">
 							<legend>
 								<input class="w3-check" type="checkbox" checked="checked" id="vote_box">
 								<label class="w3-text-dark-grey" for="vote_box" id="vote_tit">
@@ -70,14 +79,14 @@
 							<b><label data-i18n="or" for="or"></label></b>
 							<i class="fas fa-reply fa-rotate-90 fa-lg"></i>
 						</p>
-						<fieldset class="w3-border w3-round-xxlarge">
+						<fieldset class="w3-border w3-round-large">
 							<legend>
 								<input class="w3-check" type="checkbox" id="coms_box">
 								<label class="w3-text-dark-grey" for="coms_box" id="coms_tit">
 									<i class="fa fa-comments fa-lg" title="Commentary"></i> <b data-i18n="comments"></b>
 								</label>
 							</legend>
-					  	<input class="w3-input w3-border w3-round-xxlarge" type="text" name="coms_field" placeholder="Keyword (Optional)" id="coms_field" value="">
+					  	<input class="w3-input w3-border w3-round-large" type="text" name="coms_field" placeholder="Keyword (Optional)" id="coms_field" value="">
 					  </fieldset>
 					</div>
 					<label class="w3-text-dark-grey"><b data-i18n="options"></b></label>
@@ -105,17 +114,19 @@
 		<!-- Spinner end -->
 
 		<div class="w3-half w3-animate-right w3-margin-top w3-hide" id="result">
-			<div class="w3-container w3-card w3-padding-large w3-center w3-margin-bottom w3-round-xxlarge">
+			<div class="w3-container w3-card w3-padding-large w3-center w3-margin-bottom w3-round-large">
 				<h3 data-i18n="winner"></h3>
-				<div class="w3-panel w3-light-gray w3-border-red w3-topbar w3-bottombar w3-opacity w3-round-xxlarge" id="winner"><h2 data-i18n="nobody"></h2></div>
+				<div class="w3-panel w3-light-gray w3-border-red w3-topbar w3-bottombar w3-opacity w3-round-large" id="winner"><h2 data-i18n="nobody"></h2></div>
 				<table class="w3-table-all w3-centered">
 					<tr class="w3-light-grey">
 						<th><i class="fa fa-chevron-up" title="UpVote"></i> <span data-i18n="upvotes"></span></th>
 						<th><i class="fa fa-comments" title="Commentary"></i> <span data-i18n="comments"></span></th>
+						<th><i class="fa-solid fa-retweet" title="Reblog"></i> <span>Reblog</span></th>
 					</tr>
 					<tr class="w3-white">
 						<td><b id="vote_nb"></b></td>
 						<td><b id="coms_nb"></b></td>
+						<td><b id="blog_nb"></b></td>
 					</tr>
 				</table>
 				<h4><span data-i18n="requirement"></span> <span id="cond"></span></h4>
@@ -138,8 +149,8 @@
 		</div>
 
 		<div class="w3-modal" id="win_view">
-			<div class="w3-modal-content w3-card w3-round-xxlarge">
-				<header class="w3-container w3-dark-grey w3-center w3-round-xxlarge"> 
+			<div class="w3-modal-content w3-card w3-round-large">
+				<header class="w3-container w3-dark-grey w3-center w3-round-large"> 
 					<span onclick="document.getElementById('win_view').style.display='none'" class="w3-button w3-text-white w3-transparent w3-display-topright w3-margin w3-circle"><i class="fas fa-times-circle fa-gl"></i></span>
 					<h2 data-i18n="winnerslist"></h2>
 				</header>
