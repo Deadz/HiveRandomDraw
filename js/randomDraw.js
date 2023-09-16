@@ -56,11 +56,11 @@ function getAuthorPermlink(link_full)
 		{
 			link_split = link_full.split(regex_v1)[1];
 			sessionStorage.setItem("link_site", link_full.split(regex_v2)[0]+"//"+link_full.split(regex_v2)[2]);
-			console.log(sessionStorage.link_site);
+			//console.log(sessionStorage.link_site);
 			sessionStorage.setItem("author", link_split.split(regex_v2)[0]);
-			console.log(sessionStorage.author);
+			//console.log(sessionStorage.author);
 			sessionStorage.setItem("permlink", link_split.split(regex_v2)[1]);
-			console.log(sessionStorage.permlink);
+			//console.log(sessionStorage.permlink);
 			resolve();
 		}
 		else
@@ -143,13 +143,14 @@ function getInfoReblog()
 					{} // Already win
 			    else
 			    {
-			    	if($("#bots_box").is(":checked") && $.inArray(item, bots_list) >= 0)
+			    	if(($("#bots_box").is(":checked") && $.inArray(item, bots_list) >= 0) || $.inArray(item, blog_participant) >= 0)
 			    	{} // Bot
 			    	else 
 			    	{
 			    		blog_participant.push(item); // Add list
 			    	}
 					}
+
 				});
 				resolve();
 			}
